@@ -1,0 +1,11 @@
+version: '3'
+
+services:  
+  nginx:
+    container_name: nginx
+    image: nginx:latest
+    network_mode: 'host'
+    restart: always
+    volumes:
+      - ./nginx/conf/server-ssl-lb.conf:/etc/nginx/conf.d/server.conf:ro
+      - ./nginx/certs/:/etc/nginx/certs/:ro
