@@ -1,0 +1,38 @@
+version: '3'
+
+services:  
+  keycloak:
+    image: quay.io/keycloak/keycloak:${KC_VERSION}
+    environment:
+      # db config
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://10.128.0.9:5432/keycloak
+      KC_DB_URL_HOST: 10.128.0.9
+      KC_DB_URL_DATABASE: keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: password
+      
+      # admin credentials
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      
+      # log config
+      KC_LOG_LEVEL: INFO,org.infinispan:DEBUG,org.jgroups:DEBUG
+
+      # cache config
+      KC_CACHE_CONFIG_FILE: cache-ispn-tcpping.xml
+      JGROUPS_DISCOVERY_EXTERNAL_IP: 10.128.0.3
+      JGROUPS_DISCOVERY_PROTOCOL: TCPPING
+      JGROUPS_DISCOVERY_PROPERTIES: initial_hosts="10.128.0.3[7800],10.128.0.4[7800],10.128.0.7[7800]"
+    command:
+      - start
+      - --cache=ispn 
+      # - --cache-stack=tcp
+      - --cache-config-file=cache-ispn-tcpping.xml 
+      - --http-port=8080
+      - --proxy=edge
+      - --hostname-strict-https=true
+      - --hostname=keycloak.polariz.space
+    volumes:
+      - ./cache-ispn-tcpping.xml:/opt/keycloak/conf/cache-ispn-tcpping.xml:ro
+    network_mode: 'host'
