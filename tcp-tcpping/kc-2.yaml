@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  keycloak-2:
+    image: quay.io/keycloak/keycloak:${KC_VERSION}
+    environment:
+      # db config
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://${KC_DB_HOST}:${KC_DB_PORT}/${KC_DB_DATABASE}
+      KC_DB_HOST: ${KC_DB_HOST}
+      KC_DB_DATABASE: ${KC_DB_DATABASE}
+      KC_DB_USERNAME: ${KC_DB_USERNAME}
+      KC_DB_PASSWORD: ${KC_DB_PASSWORD}
+
+      # admin credentials
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      
+      # log config
+      KC_LOG_LEVEL: INFO,org.infinispan:DEBUG,org.jgroups:DEBUG
+
+      # cache config
+      # KC_CACHE_CONFIG_FILE: cache-ispn-tcpping.xml
+      JGROUPS_DISCOVERY_EXTERNAL_IP: ${JGROUPS_DISCOVERY_EXTERNAL_IP}
+      JGROUPS_DISCOVERY_PROTOCOL: TCPPING
+      INITIAL_HOSTS: ${INITIAL_HOSTS}
+      JGROUPS_DISCOVERY_PROPERTIES: initial_hosts=${INITIAL_HOSTS}
+    command:
+      - start-dev
+      - --cache=ispn
+      - --cache-config-file=cache-ispn-tcpping.xml 
+      - --http-port=8080
+      - --proxy=edge
+    volumes:
+      - ./cache-ispn-tcpping.xml:/opt/keycloak/conf/cache-ispn-tcpping.xml:ro
+    network_mode: 'host'

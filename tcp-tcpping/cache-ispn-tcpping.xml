@@ -25,7 +25,7 @@
         <stack name="tcpping" extends="tcp">
             <TCP bind_port="7800" /> // or 7801 based on the instance
             <TCPPING
-                initial_hosts="10.128.0.3[7800],10.128.0.4[7800],10.128.0.7[7800]"
+                initial_hosts="${env.INITIAL_HOSTS}"
                 max_dynamic_hosts="0"
                 port_range="0"
                 stack.combine="REPLACE"
