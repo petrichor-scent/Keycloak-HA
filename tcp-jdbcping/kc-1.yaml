@@ -1,0 +1,30 @@
+version: '3'
+
+services:  
+  keycloak-1:
+    image: quay.io/keycloak/keycloak:${KC_VERSION}
+    environment:
+      # KC configs
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}    
+
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://${KC_DB_HOST}:${KC_DB_PORT}/${KC_DB_DATABASE}
+      KC_DB_HOST: ${KC_DB_HOST}
+      KC_DB_DATABASE: ${KC_DB_DATABASE}
+      KC_DB_USERNAME: ${KC_DB_USERNAME}
+      KC_DB_PASSWORD: ${KC_DB_PASSWORD}
+      
+      KC_LOG_LEVEL: INFO,org.infinispan:DEBUG,org.jgroups:DEBUG
+      
+      KC_CACHE_CONFIG_FILE: cache-ispn-jdbc-ping.xml
+      JGROUPS_DISCOVERY_EXTERNAL_IP: ${JGROUPS_DISCOVERY_EXTERNAL_IP}
+    command:
+      - start-dev
+      - --cache=ispn
+      - --cache-config-file=cache-ispn-tcpping.xml 
+      - --http-port=8080
+      - --proxy=edge
+    volumes:
+      - ./cache-ispn-jdbc-ping.xml:/opt/keycloak/conf/cache-ispn-jdbc-ping.xml:ro
+    network_mode: 'host'
